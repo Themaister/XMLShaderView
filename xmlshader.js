@@ -65,13 +65,13 @@ function do_filter2(smooth) {
 function initGL(canvas) {
    try {
       gl = canvas.getContext("webgl");
-      if (!gl) {
+      if (gl == null) {
          gl = canvas.getContext("experimental-webgl");
       }
       gl.viewportWidth = canvas.width;
       gl.viewportHeight = canvas.height;
    } catch (e) {}
-   if (!gl) {
+   if (gl == null) {
       alert("Could not init WebGL ... :(");
    }
 }
@@ -161,6 +161,11 @@ function load_image(evt) {
             output.innerHTML = "Point";
          }
          texture_.image.src = e.target.result;
+      }
+
+   reader.onerror =
+      function(err) {
+         alert("FileReader error: " + err.getMessage());
       }
 
    reader.readAsDataURL(file);
@@ -281,8 +286,8 @@ function compile_xml_shader(vert, frag, index) {
    program.frag = frag_s;
 
    gl.useProgram(program);
-   program.vert_attr = gl.getAttribLocation(prog, "rubyVertex");
-   program.tex_attr = gl.getAttribLocation(prog, "rubyTexCoord");
+   program.vert_attr = gl.getAttribLocation(program, "rubyVertex");
+   program.tex_attr = gl.getAttribLocation(program, "rubyTexCoord");
    gl.enableVertexAttribArray(program.vert_attr);
    gl.enableVertexAttribArray(program.tex_attr);
    gl.uniform1i(gl.getUniformLocation(program, "rubyTexture"), 0);
