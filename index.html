@@ -82,16 +82,17 @@
             <input type="button" onclick="do_resize(4);" value="4x"/>
             <input type="button" onclick="do_resize(5);" value="5x"/>
             <output class="output" id="total_scale_output">1x</output></p>
+
+            <p><span class="aligned">Image:</span>
+            <input type="file" id="image_file" name="files[]"/>
+            <input type="button" onclick="reset_image();" value="Reset"/>
+            <output class="output" id="image_output">None</output></p>
          </div>
 
          <hr/>
 
          <div id="shader_1">
             <h3>Pass #1</h3>
-            <p><span class="aligned">Image:</span>
-            <input type="file" id="image_file" name="files[]"/>
-            <input type="button" onclick="reset_image();" value="Reset"/>
-            <output class="output" id="image_output">None</output></p>
 
             <p><span class="aligned">Shader:</span>
             <input type="file" id="shader_file" name="files[]"/>
