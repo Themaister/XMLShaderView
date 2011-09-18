@@ -14,7 +14,7 @@ function do_resize(scale) {
    canvas.width = texture_.image.width * scale;
    canvas.height = texture_.image.height * scale;
    var output = document.getElementById("total_scale_output");
-   output.innerHTML = "<b>" + scale + "x</b>";
+   output.innerHTML = scale + "x";
 }
 
 function do_fbo_scale(scale) {
@@ -22,9 +22,9 @@ function do_fbo_scale(scale) {
    fbo_scale = scale;
    var output = document.getElementById("fbo_scale_output");
    if (fbo_enabled) {
-      output.innerHTML = "<b>" + fbo_scale + "x</b>";
+      output.innerHTML = fbo_scale + "x</b>";
    } else {
-      output.innerHTML = "<b>Off</b>";
+      output.innerHTML = "Off";
    }
 }
 
@@ -44,9 +44,9 @@ function do_filter1(smooth) {
    gl.bindTexture(gl.TEXTURE_2D, null);
    var output = document.getElementById("filter1_output");
    if (smooth) {
-      output.innerHTML = "<b>Linear</b>";
+      output.innerHTML = "Linear";
    } else {
-      output.innerHTML = "<b>Point</b>";
+      output.innerHTML = "Point";
    }
 }
 
@@ -56,9 +56,9 @@ function do_filter2(smooth) {
    gl.bindTexture(gl.TEXTURE_2D, null);
    var output = document.getElementById("filter2_output");
    if (smooth) {
-      output.innerHTML = "<b>Linear</b>";
+      output.innerHTML = "Linear";
    } else {
-      output.innerHTML = "<b>Point</b>";
+      output.innerHTML = "Point";
    }
 }
 
@@ -152,7 +152,10 @@ function load_image(evt) {
             }
 
             var output = document.getElementById("image_output");
-            output.innerHTML = "<b>Enabled</b>";
+            output.innerHTML = "Enabled";
+
+            var output = document.getElementById("filter1_output");
+            output.innerHTML = "Point";
          }
          texture_.image.src = e.target.result;
       }
@@ -290,7 +293,7 @@ function reset_shader() {
    output.innerHTML = "";
 
    output = document.getElementById("shader1_output");
-   output.innerHTML = "<b>Default</b>";
+   output.innerHTML = "Default";
 }
 
 function reset_shader2() {
@@ -299,7 +302,7 @@ function reset_shader2() {
    output.innerHTML = "";
 
    output = document.getElementById("shader2_output");
-   output.innerHTML = "<b>Default</b>";
+   output.innerHTML = "Default";
 }
 
 function reset_image() {
@@ -307,7 +310,7 @@ function reset_image() {
    texture_.image.height = 0;
    do_resize(1);
    var output = document.getElementById("image_output");
-   output.innerHTML = "<b>None</b>";
+   output.innerHTML = "None";
 }
 
 function load_text(evt, index) {
@@ -356,7 +359,7 @@ function load_text(evt, index) {
             } else if (index === 1) {
                output = document.getElementById("shader2_output");
             }
-            output.innerHTML = "<b>Enabled</b>";
+            output.innerHTML = "Enabled";
          } catch (e) {
             alert(e);
          }
@@ -373,9 +376,9 @@ function load_text1(evt) {
    load_text(evt, 1);
 }
 
-document.getElementById("image_file").addEventListener('change', load_image, false);
-document.getElementById("shader_file").addEventListener('change', load_text0, false);
-document.getElementById("shader_file2").addEventListener('change', load_text1, false);
+document.getElementById("image_file").addEventListener("change", load_image, false);
+document.getElementById("shader_file").addEventListener("change", load_text0, false);
+document.getElementById("shader_file2").addEventListener("change", load_text1, false);
 
 function initShaders() {
    prog = gl.createProgram();
