@@ -220,17 +220,21 @@ function compile_xml_shader(vert, frag, index) {
    var vert_s = null;
    var frag_s = null;
 
+   var console = document.getElementById("error_console");
+   console.innerHTML = "Shader compile was successful!\n";
+
    if (vert) {
       vert_s = gl.createShader(gl.VERTEX_SHADER);
       gl.shaderSource(vert_s, transform_vert(vert));
       gl.compileShader(vert_s);
       if (!gl.getShaderParameter(vert_s, gl.COMPILE_STATUS)) {
-         alert(gl.getShaderInfoLog(vert_s));
+         alert("Vertex shader failed to compile!");
+         console.innerHTML = "Vertex errors:\n" + gl.getShaderInfoLog(vert_s);
          return;
       }
       var log = gl.getShaderInfoLog(vert_s);
       if (log.length > 0) {
-         alert(log);
+         console.innerHTML = "Vertex warnings:\n" + log;
       }
    } else {
       vert_s = getShader("vertex_shader");
@@ -241,12 +245,13 @@ function compile_xml_shader(vert, frag, index) {
       gl.shaderSource(frag_s, transform_frag(frag));
       gl.compileShader(frag_s);
       if (!gl.getShaderParameter(frag_s, gl.COMPILE_STATUS)) {
-         alert(gl.getShaderInfoLog(frag_s));
+         alert("Fragment shader failed to compile!");
+         console.innerHTML += "Fragment errors:\n" + gl.getShaderInfoLog(frag_s);
          return;
       }
       var log = gl.getShaderInfoLog(frag_s);
       if (log.length > 0) {
-         alert(log);
+         console.innerHTML += "Fragment warnings:\n" + log;
       }
    } else {
       frag_s = getShader("fragment_shader");
@@ -264,7 +269,8 @@ function compile_xml_shader(vert, frag, index) {
    gl.attachShader(program, frag_s);
    gl.linkProgram(program);
    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      alert(gl.getProgramInfoLog(program));
+      console.innerHTML = "Linking errors:\n" + gl.getProgramInfoLog(program);
+      alert("Failed to link program!");
       return;
    }
 
@@ -343,11 +349,11 @@ function load_text(evt, index) {
          output.innerHTML = "";
 
          if (xml.vert != null) {
-            output.innerHTML += '<textarea cols="50" rows="10" style="font-family:monospace">'
+            output.innerHTML += '<h5>Vertex</h5><textarea readonly cols="50" rows="10">'
                + xml.vert + '</textarea>';
          }
          if (xml.frag != null) {
-            output.innerHTML += '<textarea cols="50" rows="10" style="font-family:monospace">'
+            output.innerHTML += '<h5>Fragment</h5><textarea readonly cols="50" rows="10">'
                + xml.frag + '</textarea>';
          }
 

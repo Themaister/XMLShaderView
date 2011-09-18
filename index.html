@@ -35,6 +35,10 @@
             position: relative;
             left: 10px;
          }
+
+         textarea {
+            font-family: monospace;
+         }
       </style>
    </head>
    
@@ -42,12 +46,14 @@
 
       <div id="title">
          <h1>XML shader viewer</h1>
-         <h3>by Themaister</h3>
+         <hr/>
+         <h3 style="text-align: right">by Themaister</h3>
       </div>
 
       <div id="text">
-         <p>WebGL application to test your shaders against various images from your harddrive.</p>
-         <p>Written in pure HTML5/JavaScript, and can be run locally, just download the page source/script :)</p>
+         <p>Here's a WebGL application to test your shaders against various images from your harddrive.</p>
+         <p>Written in pure HTML5/JavaScript, and can be run locally, just download the page source/script.
+         It does not use the various fancy WebGL engines, so there might be something interesting inside ...</p>
 
          <p>Shaders need to conform to the XML shader specification (as supported in 
          <a href="http://byuu.org/bsnes/">bSNES</a>,
@@ -59,7 +65,8 @@
          <a href="https://gitorious.org/bsnes/bsnes/trees/patches/snesshader">here.</a></p>
          <p>Note that it is not limited to emulators, but it's certainly geared for 2D images.</p>
 
-         <p>Do note that the XML shader is converted internally to be supported by OpenGL ES 2.0. The XML shader spec bases itself on pre-OpenGL 3.x.
+         <p>Do note that the XML shader is converted internally to be supported by OpenGL ES 2.0.
+         The XML shader spec bases itself on pre-OpenGL 3.x.
          Some fixed-function components are redefined to properly use varying/attribute components.</p>
       </div>
 
@@ -83,12 +90,12 @@
             <h3>Pass #1</h3>
             <p><span class="aligned">Image:</span>
             <input type="file" id="image_file" name="files[]"/>
-            <input type="button" onclick="reset_image();" value="Reset image"/>
+            <input type="button" onclick="reset_image();" value="Reset"/>
             <output class="output" id="image_output">None</output></p>
 
             <p><span class="aligned">Shader:</span>
             <input type="file" id="shader_file" name="files[]"/>
-            <input type="button" onclick="reset_shader();" value="Reset shader"/>
+            <input type="button" onclick="reset_shader();" value="Reset"/>
             <output class="output" id="shader1_output">Default</p>
 
             <p><span class="aligned">Filter:</span>
@@ -111,7 +118,7 @@
 
             <p><span class="aligned">Shader:</span>
             <input type="file" id="shader_file2" name="files[]"/>
-            <input type="button" onclick="reset_shader2();" value="Reset shader"/>
+            <input type="button" onclick="reset_shader2();" value="Reset"/>
             <output class="output" id="shader2_output">Default</output></p>
 
             <p><span class="aligned">Filter:</span>
@@ -121,8 +128,14 @@
          </div>
 
          <hr/>
-         <h4>Output:</h4>
+         <h3>Output</h3>
          <canvas id="test_canvas" style="border: none" width="256" height="224"></canvas><br/>
+         <p style="font-size: 75%">Hint: You can save the final result just as you would save an image!</p>
+         <hr/>
+
+         <h3>Logging</h3>
+         <h4>Error console</h4>
+         <textarea id="error_console" readonly cols="50" rows="10"></textarea>
          <hr/>
          <h4>Shader #1</h4>
          <output id="text_output"></output><br/>
