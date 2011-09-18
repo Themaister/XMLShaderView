@@ -212,6 +212,7 @@ function transform_vert(vert_) {
    vert += "attribute vec2 rubyTexCoord;\n";
    vert += "varying vec4 rubyTexCoord_[8];\n";
    vert += "#define gl_TexCoord rubyTexCoord_\n";
+   vert += "vec4 ftransform(void) { return vec4(rubyVertex, 0.0, 1.0); }\n";
    vert += vert_;
    return vert;
 }
@@ -242,7 +243,7 @@ function compile_xml_shader(vert, frag, index) {
       }
       var log = gl.getShaderInfoLog(vert_s);
       if (log.length > 0) {
-         console.innerHTML = "Vertex warnings:\n" + log;
+         console.innerHTML += "Vertex warnings:\n" + log;
       }
    } else {
       vert_s = getShader("vertex_shader");
@@ -254,7 +255,7 @@ function compile_xml_shader(vert, frag, index) {
       gl.compileShader(frag_s);
       if (!gl.getShaderParameter(frag_s, gl.COMPILE_STATUS)) {
          alert("Fragment shader failed to compile!");
-         console.innerHTML += "Fragment errors:\n" + gl.getShaderInfoLog(frag_s);
+         console.innerHTML = "Fragment errors:\n" + gl.getShaderInfoLog(frag_s);
          return;
       }
       var log = gl.getShaderInfoLog(frag_s);
