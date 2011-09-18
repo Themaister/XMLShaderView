@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+   <meta charset="utf-8">
+   <head>
+      <title>XML Shader (1.0) Viewer</title>
+   </head>
+   <style type="text/css">
+      body {
+         background: #eeeeee;
+         font-family: Verdana, serif;
+         margin: 20px;
+      }
+   </style>
+
+   <body onload="webGLStart();">
+      <h1>XML shader viewer</h1>
+      <p>WebGL application to test your shaders against various images from your harddrive.</p>
+      <p>Written in pure HTML5/JavaScript, and can be run locally, just download the page source :)</p>
+
+      <p>Shaders need to conform to the XML shader specification (supported in 
+      <a href="http://byuu.org/bsnes/">bSNES</a>,
+      <a href="https://github.com/Themaister/SSNES">SSNES</a> and
+      <a href="http://snes9x.com">SNES9x-Win32</a>).
+      A draft of this spec can be found
+      <a href="https://gitorious.org/bsnes/pages/XmlShaderFormat">here.</a>
+      Note that only the 1.0 subset is supported. Some example shaders can be found
+      <a href="https://gitorious.org/bsnes/bsnes/trees/patches/snesshader">here.</a></p>
+      <p>Note that it is not limited to emulators, but it's certainly geared for 2D images.</p>
+
+      <p>Do note that the XML shader is converted internally to be supported by OpenGL ES 2.0. The XML shader spec bases itself on pre-OpenGL 3.x.
+         Some fixed-function components are redefined to properly use varying/attribute components.</p>
+
+      <hr/>
+
+      <p>Total scale:
+      <input type="button" onclick="do_resize(0.25);" value="0.25x"/>
+      <input type="button" onclick="do_resize(0.5);" value="0.5x"/>
+      <input type="button" onclick="do_resize(1);" value="1x"/>
+      <input type="button" onclick="do_resize(2);" value="2x"/>
+      <input type="button" onclick="do_resize(3);" value="3x"/>
+      <input type="button" onclick="do_resize(4);" value="4x"/>
+      <input type="button" onclick="do_resize(5);" value="5x"/>
+      <output id="total_scale_output"><b>1x</b></output></p>
+
+      <hr/>
+
+      <p>Image: <input type="file" id="image_file" name="files[]"/>
+      <input type="button" onclick="reset_image();" value="Reset image"/>
+      <output id="image_output"><b>None</b></output></p>
+
+      <p>Shader (1. pass): <input type="file" id="shader_file" name="files[]"/>
+      <input type="button" onclick="reset_shader();" value="Reset shader"/>
+      <output id="shader1_output"><b>Default</b></p>
+
+      <p>Filter (1. pass):
+      <input type="button" onclick="do_filter1(false)" value="Point"/>
+      <input type="button" onclick="do_filter1(true)" value="Linear"/>
+      <output id="filter1_output"><b>Point</b></p>
+
+      <hr/>
+
+      <p>FBO scale:
+      <input type="button" onclick="do_fbo_scale(0);" value="Off"/>
+      <input type="button" onclick="do_fbo_scale(1);" value="1x"/>
+      <input type="button" onclick="do_fbo_scale(2);" value="2x"/>
+      <input type="button" onclick="do_fbo_scale(3);" value="3x"/>
+      <input type="button" onclick="do_fbo_scale(4);" value="4x"/>
+      <output id="fbo_scale_output"><b>Off</b></output></p>
+
+      <p>Shader (2. pass): <input type="file" id="shader_file2" name="files[]"/>
+      <input type="button" onclick="reset_shader2();" value="Reset shader"/>
+      <output id="shader2_output"><b>Default</b></output></p>
+
+      <p>Filter (2. pass):
+      <input type="button" onclick="do_filter2(false)" value="Point"/>
+      <input type="button" onclick="do_filter2(true)" value="Linear"/>
+      <output id="filter2_output"><b>Point</b></p>
+
+      <hr/>
+      <h4>Output:</h4>
+      <canvas id="test_canvas" style="border: none" width="256" height="224"></canvas><br/>
+      <hr/>
+      <h4>Shader #1</h4>
+      <output id="text_output"></output><br/>
+      <hr/>
+      <h4>Shader #2</h4>
+      <output id="text_output2"></output><br/>
+   </body>
+
+   <script id="vertex_shader" type="x-shader/x-vertex">
+      attribute vec2 rubyVertex;
+      attribute vec2 rubyTexCoord;
+      varying vec4 rubyTexCoord_[8];
+      void main()
+      {
+         gl_Position = vec4(rubyVertex, 0.0, 1.0);
+         rubyTexCoord_[0] = vec4(rubyTexCoord, 0.0, 1.0);
+      }
+   </script>
+
+   <script id="fragment_shader" type="x-shader/x-fragment">
+      #ifdef GL_ES
+      precision highp float;
+      #endif
+
+      uniform sampler2D rubyTexture;
+      varying vec4 rubyTexCoord_[8];
+
+      void main()
+      {
+         gl_FragColor = texture2D(rubyTexture, rubyTexCoord_[0].xy);
+      }
+   </script>
+   <script type="text/javascript" src="xmlshader.js"></script>
+</html>
