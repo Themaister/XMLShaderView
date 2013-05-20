@@ -2,7 +2,7 @@
 <html lang="en">
    <meta charset="utf-8">
    <head>
-      <title>XML Shader (1.0) Viewer</title>
+      <title>RetroArch GLSL Shader Viewer</title>
 
       <style type="text/css">
          body {
@@ -45,35 +45,27 @@
    <body onload="webGLStart();">
 
       <div id="title">
-         <h1>XML shader viewer</h1>
+         <h1>RetroArch GLSL shader viewer</h1>
          <hr/>
          <h3 style="text-align: right">by Themaister</h3>
       </div>
 
       <div id="text">
          <p>Here's a WebGL application to test your shaders against various images from your harddrive.</p>
-         <p>Written in pure HTML5/JavaScript, and can be run locally, just download the page source/script.
-         It does not use the various fancy WebGL engines, so there might be something interesting inside ...</p>
 
-         <p>Shaders need to conform to the XML shader specification (as supported in 
-         <a href="http://byuu.org/bsnes/">bSNES</a>,
-         <a href="https://github.com/Themaister/SSNES">SSNES</a> and
-         <a href="http://snes9x.com">SNES9x-Win32</a>).
-         A draft of this spec can be found
-         <a href="https://gitorious.org/bsnes/pages/XmlShaderFormat">here.</a>
-         Note that only the 1.0 subset is supported. Some example shaders can be found
-         <a href="https://gitorious.org/bsnes/bsnes/trees/patches/snesshader">here.</a></p>
-         <p>Note that it is not limited to emulators, but it's certainly geared for 2D images.</p>
+         <p>Shaders need to conform to the GLSL shader format that RetroArch uses.
+         You can find out more about this format <a href="https://github.com/Themaister/RetroArch/wiki/GLSL-shaders">here</a>. This implementation is limited to two passes for now. GLSL presets are not currently supported either.</p>
 
-         <p>Do note that the XML shader is converted internally to be supported by OpenGL ES 2.0.
-         The XML shader spec bases itself on pre-OpenGL 3.x.
-         Some fixed-function components are redefined to properly use varying/attribute components.</p>
+         <p>With the <a href="https://github.com/Themaister/RetroArch/blob/master/tools/cg2glsl.py">cg2glsl tool</a> you can
+         convert Cg shaders (<a href="https://github.com/Themaister/RetroArch/wiki/Cg-shaders">Wiki</a>, <a href="https://github.com/libretro/common-shaders">shader collection</a>) to the RetroArch GLSL format.
+
+         <p>The shaders should conform to GLSL ES 1.0/WebGL shader spec. The shaders converted with cg2glsl will ensure this.</p>
       </div>
 
       <div id="content">
          <div id="scale">
             <h3>Global</h3>
-            <p><span class="aligned">Total scale:</span>
+            <p><span class="aligned">Canvas scale:</span>
             <input type="button" onclick="do_resize(0.25);" value="0.25x"/>
             <input type="button" onclick="do_resize(0.5);" value="0.5x"/>
             <input type="button" onclick="do_resize(1);" value="1x"/>
@@ -81,6 +73,7 @@
             <input type="button" onclick="do_resize(3);" value="3x"/>
             <input type="button" onclick="do_resize(4);" value="4x"/>
             <input type="button" onclick="do_resize(5);" value="5x"/>
+            <input type="button" onclick="do_resize(6);" value="6x"/>
             <output class="output" id="total_scale_output">1x</output></p>
 
             <p><span class="aligned">Image:</span>
@@ -123,13 +116,15 @@
             <output class="output" id="shader2_output">Default</output></p>
 
             <p><span class="aligned">Filter:</span>
-            <input type="button" onclick="do_filter2(false)" value="Point"/>
-            <input type="button" onclick="do_filter2(true)" value="Linear"/>
+            <input type="button" onclick="do_filter2(false);" value="Point"/>
+            <input type="button" onclick="do_filter2(true);" value="Linear"/>
             <output class="output" id="filter2_output">Point</p>
          </div>
 
          <hr/>
          <h3>Output</h3>
+         <p><output id="frame_count"><b>Frames</b></output></p>
+         <p><output id="geometry"><b>Geometry</b></output></p>
          <canvas id="test_canvas" style="border: none" width="256" height="224"></canvas><br/>
          <p style="font-size: 75%">Hint: You can save the final result just as you would save an image!</p>
          <hr/>
@@ -146,29 +141,31 @@
       </div>
    </body>
 
-   <script id="vertex_shader" type="x-shader/x-vertex">
-      attribute vec2 rubyVertex;
-      attribute vec2 rubyTexCoord;
-      varying vec4 rubyTexCoord_[8];
+   <script id="default_shader" type="x-shader/x-vertex">
+      #if defined(VERTEX)
+      uniform mat4 MVPMatrix;
+      attribute vec2 VertexCoord;
+      attribute vec2 TexCoord;
+      varying vec2 tex_coord;
       void main()
       {
-         gl_Position = vec4(rubyVertex, 0.0, 1.0);
-         rubyTexCoord_[0] = vec4(rubyTexCoord, 0.0, 1.0);
+         gl_Position = MVPMatrix * vec4(VertexCoord, 0.0, 1.0);
+         tex_coord = TexCoord;
       }
-   </script>
-
-   <script id="fragment_shader" type="x-shader/x-fragment">
+      #elif defined(FRAGMENT)
       #ifdef GL_ES
       precision highp float;
       #endif
 
-      uniform sampler2D rubyTexture;
-      varying vec4 rubyTexCoord_[8];
+      uniform sampler2D Texture;
+      varying vec2 tex_coord;
 
       void main()
       {
-         gl_FragColor = texture2D(rubyTexture, rubyTexCoord_[0].xy);
+         gl_FragColor = texture2D(Texture, tex_coord);
       }
+      #endif
    </script>
-   <script type="text/javascript" src="xmlshader.js"></script>
+
+   <script type="text/javascript" src="glslshader.js"></script>
 </html>
